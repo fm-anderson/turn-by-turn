@@ -1,11 +1,14 @@
 import React from "react";
 
 interface TableDataProps {
-  children: string;
+  children: React.ReactNode;
+  hideOnMobile?: boolean;
 }
 
-function TableData({ children }: React.PropsWithChildren<TableDataProps>) {
-  return <td>{children}</td>;
+function TableData({ children, hideOnMobile }: TableDataProps) {
+  const className = hideOnMobile ? " hidden md:block" : "";
+
+  return <td className={className}>{children}</td>;
 }
 
 export default TableData;

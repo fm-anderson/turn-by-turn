@@ -263,16 +263,17 @@ function App() {
           </div>
         )}
       </div>
+
       <div className="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
         {routeData && (
           <table className="table table-xs md:table-md">
             <thead>
               <tr>
                 <th>#</th>
-                <th>Date</th>
+                <th className="hidden md:block">Date</th>
                 <th>Departure Point</th>
                 <th>Arrival Point</th>
-                <th>Lenght of Rest</th>
+                <th className="hidden md:block">Lenght of Rest</th>
                 <th>Aprox. Mileage</th>
               </tr>
             </thead>
@@ -305,10 +306,10 @@ function App() {
                   return (
                     <tr key={index}>
                       <th>{index + 1}</th>
-                      <TableData>{formattedDate}</TableData>
+                      <TableData hideOnMobile={true}>{formattedDate}</TableData>
                       <TableData>{stop.address}</TableData>
                       <TableData>{arrivalStop.address}</TableData>
-                      <TableData>8 hours</TableData>
+                      <TableData hideOnMobile={true}>8 hours</TableData>
                       <td>
                         {routeData.stops[index + 1].actualDistanceAdded.toFixed(
                           0
