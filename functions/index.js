@@ -7,7 +7,13 @@ const cors = require("cors");
 const GOOGLE_MAPS_API_KEY_SECRET = defineSecret("GOOGLE_MAPS_API_KEY");
 
 const app = express();
-app.use(cors({ origin: true }));
+const corsOptions = {
+  origin: "https://turnbyturn.netlify.app",
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true,
+  optionsSuccessStatus: 204,
+};
+app.use(cors(corsOptions));
 
 const INITIAL_MILES_PER_STOP = 485;
 

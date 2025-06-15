@@ -143,7 +143,7 @@ function App() {
   const isFormComplete = origin && destination && startDate;
 
   return (
-    <div className="flex flex-col gap-3 justify-center items-center h-screen">
+    <div className="flex flex-col gap-3 justify-center items-center h-screen mx-4">
       <div className="text-center mb-8">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
           Turn-By-Turn Route Generator
