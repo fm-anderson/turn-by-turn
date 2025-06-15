@@ -24,6 +24,19 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const getTurnByTurnMapsUrl = (originalUrl: string): string => {
+    const dataIndex = originalUrl.indexOf("/data=");
+
+    if (dataIndex !== -1) {
+      return (
+        originalUrl.substring(0, dataIndex) +
+        "/am=t" +
+        originalUrl.substring(dataIndex)
+      );
+    }
+    return originalUrl + "/am=t";
+  };
+
   const cleanAddress = (address: string): string => {
     let cleaned = address.trim();
 
@@ -127,9 +140,19 @@ function App() {
     }
   };
 
+  const isFormComplete = origin && destination && startDate;
+
   return (
     <div className="flex flex-col gap-3 justify-center items-center h-screen">
-      <div className="w-96">
+      <div className="text-center mb-8">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+          Turn-By-Turn Route Generator
+        </h1>
+        <p className="text-gray-500 mt-2 text-sm md:text-md">
+          Enter your start and end points to calculate daily stops.
+        </p>
+      </div>
+      <div>
         <form onSubmit={handleGenerateRoute} className="flex flex-col gap-3">
           <span className="flex gap-3 mx-auto">
             <fieldset className="fieldset">
@@ -167,7 +190,11 @@ function App() {
             />
           </fieldset>
 
-          <button type="submit" className="btn" disabled={isLoading}>
+          <button
+            type="submit"
+            className="btn"
+            disabled={isLoading || !isFormComplete}
+          >
             {isLoading && (
               <span className="loading loading-spinner loading-sm"></span>
             )}
@@ -176,7 +203,12 @@ function App() {
         </form>
         {routeData && (
           <div className="flex justify-between mt-4">
-            <a className="btn" href={routeData?.googleMapsUrl} target="_blank">
+            <a
+              className="btn"
+              href={routeData?.googleMapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Google Maps
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -197,7 +229,12 @@ function App() {
                 <path d="M21 21.5v-4.5h-4.5" />
               </svg>
             </a>
-            <button className="btn">
+            <a
+              className="btn"
+              href={getTurnByTurnMapsUrl(routeData?.googleMapsUrl)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Turn By Turn
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -216,7 +253,7 @@ function App() {
                 <path d="M12 13l0 9" />
                 <path d="M9 19l3 3l3 -3" />
               </svg>
-            </button>
+            </a>
           </div>
         )}
 
@@ -228,7 +265,7 @@ function App() {
       </div>
       <div className="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
         {routeData && (
-          <table className="table">
+          <table className="table table-xs md:table-md">
             <thead>
               <tr>
                 <th>#</th>

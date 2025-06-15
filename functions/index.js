@@ -9,7 +9,7 @@ const GOOGLE_MAPS_API_KEY_SECRET = defineSecret("GOOGLE_MAPS_API_KEY");
 const app = express();
 app.use(cors({ origin: true }));
 
-const INITIAL_MILES_PER_STOP = 490;
+const INITIAL_MILES_PER_STOP = 485;
 
 async function getDirections(originPoint, destinationPoint) {
   const apiKey = GOOGLE_MAPS_API_KEY_SECRET.value();
