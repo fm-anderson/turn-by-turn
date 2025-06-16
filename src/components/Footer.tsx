@@ -1,6 +1,6 @@
 function Footer() {
   return (
-    <footer className="flex text-sm justify-between text-base-content p-4">
+    <footer className="flex text-sm justify-between text-base-content px-6 pb-6 pt-2">
       <p>© {new Date().getFullYear()} </p>
       <a
         className="link"
