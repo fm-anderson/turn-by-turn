@@ -3,7 +3,7 @@ function Footer() {
     <footer className="flex text-sm justify-between text-base-content px-6 pb-6 pt-2">
       <p>© {new Date().getFullYear()} </p>
       <a
-        className="link"
+        className="link-hover"
         href="https://github.com/fm-anderson"
         target="_blank"
         rel="noopener noreferrer"

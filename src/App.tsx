@@ -329,7 +329,7 @@ function App() {
                         <TableData>{arrivalStop.address}</TableData>
                         <TableData hideOnMobile={true}>8 hours</TableData>
                         <TableData>
-                          +{arrivalStop.actualDistanceAdded.toFixed(0)} mi
+                          {arrivalStop.actualDistanceAdded.toFixed(0)} mi
                         </TableData>
                       </tr>
                     );
