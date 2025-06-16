@@ -8,7 +8,7 @@ const GOOGLE_MAPS_API_KEY_SECRET = defineSecret("GOOGLE_MAPS_API_KEY");
 
 const app = express();
 const corsOptions = {
-  origin: "https://turnbyturn.netlify.app",
+  origin: ["turnbyturn.netlify.app", "turnbyturn.app", "www.turnbyturn.app"],
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
   optionsSuccessStatus: 204,
