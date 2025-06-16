@@ -1,89 +1,17 @@
 import { useState } from "react";
-import TableData from "./components/TableData";
+import Actions from "./components/Actions";
+import Table from "./components/Table";
 import Footer from "./components/Footer";
-
-interface Stop {
-  address: string;
-  distanceFromStart: number | string;
-  lat: number;
-  lng: number;
-  actualDistanceAdded: number;
-}
-
-interface RouteData {
-  totalDistanceMiles: string;
-  totalDuration: string;
-  stops: Stop[];
-  googleMapsUrl: string;
-}
+import { cleanAddress } from "./utils/helpers";
+import type { TRouteData } from "./utils/types";
 
 function App() {
   const [origin, setOrigin] = useState("");
   const [destination, setDestination] = useState("");
-  const [routeData, setRouteData] = useState<RouteData | null>(null);
+  const [routeData, setRouteData] = useState<TRouteData | null>(null);
   const [startDate, setStartDate] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-
-  const getTurnByTurnMapsUrl = (originalUrl: string): string => {
-    const dataIndex = originalUrl.indexOf("/data=");
-
-    if (dataIndex !== -1) {
-      return (
-        originalUrl.substring(0, dataIndex) +
-        "/am=t" +
-        originalUrl.substring(dataIndex)
-      );
-    }
-    return originalUrl + "/am=t";
-  };
-
-  const cleanAddress = (address: string): string => {
-    let cleaned = address.trim();
-
-    cleaned = cleaned.replace(/, USA$/, "");
-
-    const parts = cleaned.split(",").map((part) => part.trim());
-
-    let city = "";
-    let state = "";
-
-    const stateRegex = /^[A-Z]{2}$/;
-
-    for (let i = parts.length - 1; i >= 0; i--) {
-      const currentPart = parts[i];
-      if (stateRegex.test(currentPart)) {
-        state = currentPart;
-        if (i > 0) {
-          city = parts[i - 1];
-        }
-        break;
-      } else if (currentPart.match(/^[A-Z]{2}\s\d{5}(-\d{4})?$/)) {
-        const stateZipParts = currentPart.split(" ");
-        if (stateZipParts.length > 0 && stateRegex.test(stateZipParts[0])) {
-          state = stateZipParts[0];
-          if (i > 0) {
-            city = parts[i - 1];
-          }
-          break;
-        }
-      }
-    }
-
-    if (city && state) {
-      return `${city}, ${state}`;
-    }
-
-    const relevantParts = parts.filter((p) => !p.match(/^\d+$/));
-
-    if (relevantParts.length >= 2) {
-      return `${relevantParts[relevantParts.length - 2]}, ${relevantParts[relevantParts.length - 1]}`;
-    } else if (relevantParts.length === 1) {
-      return relevantParts[0];
-    }
-
-    return cleaned;
-  };
 
   const handleGenerateRoute = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -115,14 +43,14 @@ function App() {
         );
       }
 
-      const data: RouteData = await response.json();
+      const data: TRouteData = await response.json();
 
       const cleanedStops = data.stops.map((stop) => ({
         ...stop,
         address: cleanAddress(stop.address),
       }));
 
-      const cleanedRouteData: RouteData = {
+      const cleanedRouteData: TRouteData = {
         ...data,
         stops: cleanedStops,
       };
@@ -220,123 +148,10 @@ function App() {
           )}
         </div>
         {routeData && (
-          <div className="w-full max-w-md flex justify-between mb-8">
-            <a
-              className="btn bg-white text-black border-[#e5e5e5] rounded-lg"
-              href={routeData?.googleMapsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Google Maps
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="icon icon-tabler icons-tabler-outline icon-tabler-map-pin-share ml-2"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
-                <path d="M12.02 21.485a1.996 1.996 0 0 1 -1.433 -.585l-4.244 -4.243a8 8 0 1 1 13.403 -3.651" />
-                <path d="M16 22l5 -5" />
-                <path d="M21 21.5v-4.5h-4.5" />
-              </svg>
-            </a>
-            <a
-              className="btn bg-white text-black border-[#e5e5e5] rounded-lg"
-              href={getTurnByTurnMapsUrl(routeData?.googleMapsUrl)}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Turn By Turn
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="icon icon-tabler icons-tabler-outline icon-tabler-cloud-download ml-2"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M19 18a3.5 3.5 0 0 0 0 -7h-1a5 4.5 0 0 0 -11 -2a4.6 4.4 0 0 0 -2.1 8.4" />
-                <path d="M12 13l0 9" />
-                <path d="M9 19l3 3l3 -3" />
-              </svg>
-            </a>
-          </div>
-        )}
-        {routeData && (
-          <div className="overflow-x-auto rounded-lg bg-base-100 shadow-xl">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th className="hidden md:table-cell">Date</th>
-                  <th>Departure Point</th>
-                  <th>Arrival Point</th>
-                  <th className="hidden md:table-cell">Lenght of Rest</th>
-                  <th>Approx. Mileage</th>
-                </tr>
-              </thead>
-              <tbody>
-                {routeData.stops
-                  .slice(0, routeData.stops.length - 1)
-                  .map((stop: Stop, index: number) => {
-                    const arrivalStop = routeData.stops[index + 1];
-
-                    const [year, month, day] = startDate.split("-").map(Number);
-                    const initialDepartureDate = new Date(year, month - 1, day);
-                    initialDepartureDate.setHours(0, 0, 0, 0);
-
-                    const daysToAdd = Math.ceil(
-                      parseFloat(stop.distanceFromStart.toString()) / 500
-                    );
-
-                    const currentSegmentDate = new Date(initialDepartureDate);
-                    currentSegmentDate.setDate(
-                      initialDepartureDate.getDate() + daysToAdd
-                    );
-
-                    const formattedDate = currentSegmentDate
-                      .toLocaleDateString("en-US", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      })
-                      .replace(/,/, "");
-
-                    return (
-                      <tr
-                        key={index}
-                        className="border-b border-gray-200 hover:bg-gray-50"
-                      >
-                        <th className="py-3 px-4 text-sm text-gray-900">
-                          {index + 1}
-                        </th>
-                        <TableData hideOnMobile={true}>
-                          {formattedDate}
-                        </TableData>
-                        <TableData>{stop.address}</TableData>
-                        <TableData>{arrivalStop.address}</TableData>
-                        <TableData hideOnMobile={true}>8 hours</TableData>
-                        <TableData>
-                          {arrivalStop.actualDistanceAdded.toFixed(0)} mi
-                        </TableData>
-                      </tr>
-                    );
-                  })}
-              </tbody>
-            </table>
-          </div>
+          <>
+            <Actions routeData={routeData} />
+            <Table startDate={startDate} routeData={routeData} />
+          </>
         )}
       </div>
       <Footer />
