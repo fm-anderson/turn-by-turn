@@ -60,7 +60,13 @@ function App() {
     } catch (err) {
       console.error("Error fetching route:", err);
       if (err instanceof Error) {
-        setError(err.message);
+        if (err.message.includes(`Unexpected token 'F', "Failed to "`)) {
+          setError(
+            "There was an issue processing the address. Please double-check the spelling or try adding the city and state (e.g., 'Chicago, IL')."
+          );
+        } else {
+          setError(err.message);
+        }
       } else {
         setError("An unexpected error occurred. Please try again.");
       }
@@ -108,7 +114,7 @@ function App() {
                   type="text"
                   value={destination}
                   onChange={(e) => setDestination(e.target.value)}
-                  placeholder="e.g Luke AFB"
+                  placeholder="e.g. Luke AFB"
                   disabled={isLoading}
                   aria-label="Destination"
                 />

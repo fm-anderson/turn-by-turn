@@ -19,7 +19,7 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-const INITIAL_MILES_PER_STOP = 485;
+const INITIAL_MILES_PER_STOP = 470;
 
 async function getDirections(originPoint, destinationPoint) {
   const apiKey = GOOGLE_MAPS_API_KEY_SECRET.value();
